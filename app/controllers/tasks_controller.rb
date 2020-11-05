@@ -2,7 +2,8 @@ class TasksController < ApplicationController
 before_action :set_task, only: [:show, :edit, :update, :destroy]
     
     def index
-        @tasks = Task.all
+        #1ページに25件、降順で表示
+        @tasks = Task.order(id: :desc).page(params[:page])
     end
     
     def show
