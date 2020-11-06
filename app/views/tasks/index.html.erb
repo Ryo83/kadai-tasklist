@@ -1,5 +1,19 @@
 <h1>タスク一覧</h1>
 
+<!--ログイン後の画面なので、そもそも下のif文は必要ない気がする(loginしていない場合がありえないため)-->
+<% if logged_in? %>
+  <p>ログイン完了ユーザ: <%= current_user.name %></p>
+<% else %>
+  <div class="center jumbotron">
+    <div class="text-center">
+      <h1>Welcome to the Tasklist</h1>
+      <%= link_to 'Sign up now!', signup_path, class: 'btn btn-lg btn-primary' %>
+    </div>
+  </div>
+<% end %>
+
+<%= link_to '新規タスクの登録', new_task_path, class: 'btn btn-primary' %><br>
+
 <% if @tasks.any? %>
     <table class='table table-striped'>
         <thead>
@@ -24,5 +38,3 @@
         <%= paginate @tasks %>
     </div>
 <% end %>
-
-<%= link_to '新規タスクの登録', new_task_path, class: 'btn btn-primary' %>

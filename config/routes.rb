@@ -1,4 +1,11 @@
 Rails.application.routes.draw do
+  get 'sessions/new'
+  get 'sessions/create'
+  get 'sessions/destroy'
+  get 'login', to: 'sessions#new'
+  post 'login', to: 'sessions#create'
+  delete 'logout', to: 'sessions#destroy'
+  
   get 'users/index'
   get 'users/show'
   get 'users/new'
@@ -7,5 +14,8 @@ Rails.application.routes.draw do
     root to: 'tasks#index'
 
     #resourcesの中には、RESTful(index,show,new,create,edit,update,destroy)というルーティングがすべて収まっている
+    #lesson15では、タスクでできる操作を作成と削除のみに指定
     resources :tasks
+    get 'signup', to: 'users#new'
+    resources :users, only: [:index, :show, :new, :create]
 end
