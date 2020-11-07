@@ -1,21 +1,14 @@
 Rails.application.routes.draw do
-  get 'sessions/new'
-  get 'sessions/create'
-  get 'sessions/destroy'
+  root to: 'tasks#index'
+  
+  #本来ならURLは「sessions/new」なところを「/login」で同じページに行くように設定
   get 'login', to: 'sessions#new'
   post 'login', to: 'sessions#create'
   delete 'logout', to: 'sessions#destroy'
-  
-  get 'users/index'
-  get 'users/show'
-  get 'users/new'
-  get 'users/create'
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
-    root to: 'tasks#index'
 
-    #resourcesの中には、RESTful(index,show,new,create,edit,update,destroy)というルーティングがすべて収まっている
-    #lesson15では、タスクでできる操作を作成と削除のみに指定
-    resources :tasks
-    get 'signup', to: 'users#new'
-    resources :users, only: [:index, :show, :new, :create]
+  resources :tasks
+  
+  get 'signup', to: 'users#new'
+  resources :users, only: [:index, :show, :new, :create]
+    
 end

@@ -1,6 +1,8 @@
 <div class='row'>
     <div class='col-6'>        
         <%= form_with(model: task, local: true) do |t| %>
+        
+        <!--task.errors.any?は、エラーメッセージの定型文-->
             <% if task.errors.any? %>
                 <div id='error_explanation' class='alert alert-warning' %>
                     <ul>

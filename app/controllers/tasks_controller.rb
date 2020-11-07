@@ -1,11 +1,17 @@
 class TasksController < ApplicationController
-before_action :require_user_logged_in
-before_action :set_task, only: [:show, :edit, :update, :destroy]
-before_action :correct_user, only: [:destroy, :edit]
+  #全アクション実行前に、ログインユーザーかどうかの確認を行う
+  before_action :require_user_logged_in
+  
+  #set_task必要か？いらない気がする
+  before_action :set_task, only: [:show, :edit, :update, :destroy]
+  #destroy, editアクション前に、「そのタスクがログインユーザーによって生成されたものかどうか」を確認する
+  before_action :correct_user, only: [:destroy, :edit]
     
     def index
-        #1ページに25件、降順で表示
-        @tasks = Task.order(id: :desc).page(params[:page])
+        #Task.orderだと、tasksテーブルにある情報を全て取得してきてしまう
+        #tasksテーブルにある、ログインユーザーの情報のみを取得したい場合は、14行目のように記述する
+        # @tasks = Task.order(id: :desc).page(params[:page])
+        @tasks = current_user.tasks.order(id: :desc).page(params[:page])
     end
     
     def show
@@ -15,19 +21,10 @@ before_action :correct_user, only: [:destroy, :edit]
         @task = Task.new
     end 
     
-    # def create
-    #   @task = Task.new(task_params)
-      
-    #   if @task.save
-    #     flash[:success] = 'タスクが追加されました'
-    #     redirect_to @task
-    #   else
-    #     flash.now[:danger] = 'タスクは追加できませんでした'
-    #     render :new
-    #   end
-    # end
     
     def create
+      #buildの書き方は、親モデル.子モデル.buildで記述する
+      #今回の場合、current_user(ログインしてるユーザーで、tasksテーブルに新規作成する処理)
       @task = current_user.tasks.build(task_params)
       if @task.save
         flash[:success] = 'タスクを追加しました'
@@ -68,8 +65,14 @@ before_action :correct_user, only: [:destroy, :edit]
         params.require(:task).permit(:content, :status)
     end
     
+    #correct_user=正しいユーザー
     def correct_user
+      #current_userは、cookieに保存されたユーザーidを元に、ユーザーの情報を取得するメソッ
+      #tasks.find_by(id: params[:id])なので、tasksテーブルからユーザーを探すメソッド
+      
+      #つまり、「ログインユーザーidとtasksテーブルのuser_idが一致しているか確認する処理」を、@taskに代入
       @task = current_user.tasks.find_by(id: params[:id])
+      #tasksテーブルのuser_idとログインユーザーidが一致しなかったら、トップ画面にリダイレクトする
       unless @task
         redirect_to root_url
       end
